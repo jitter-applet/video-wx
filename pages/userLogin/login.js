@@ -41,6 +41,7 @@ Page({
             // 登录成功跳转 
 
             app.userInfo = res.data.data;
+            console.log("hhhehe",app.userInfo)
             // fixme 修改原有的全局对象为本地缓存
             //app.setGlobalUserInfo(res.data.data);
             // 页面跳转
