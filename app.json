@@ -1,9 +1,10 @@
 {
   "pages": [
+    "pages/chooseBgm/chooseBgm",
     "pages/userLogin/login",
     "pages/mine/mine",
-    "pages/userRegist/regist",
-    "pages/index/index"
+    "pages/index/index",
+    "pages/userRegist/regist"
   ],
   "window": {
     "backgroundTextStyle": "light",
