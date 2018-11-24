@@ -3,15 +3,17 @@ const app = getApp()
 Page({
   data: {
     bgmList: [],
-    serverUrl:"",
-    poster: 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003rsKF44GyaSk.jpg?max_age=2592000',
-    name: '此时此刻',
-    author: '许巍',
-    src: 'http://ws.stream.qqmusic.qq.com/M500001VfvsJ21xFqb.mp3?guid=ffffffff82def4af4b12b3cd9337d5e7&uin=346897220&vkey=6292F51E1E384E06DCBDC9AB7C49FD713D632D313AC4858BACB8DDD29067D3C601481D36E62053BF8DFEAF74C0A5CCFADD6471160CAF3E6A&fromtag=46',
+    serverUrl: "",
+    videoParams: {}
+
   },
 
   onLoad: function(params) {
     var me = this;
+    console.log(params);
+    me.setData({
+      videoParams: params
+    })
     wx.showLoading({
       title: '请等待...',
     });
@@ -28,7 +30,7 @@ Page({
         if (res.data.status == 200) {
           var bgmList = res.data.data
           me.setData({
-            bgmList : bgmList,
+            bgmList: bgmList,
             serverUrl: serverUrl
           })
         }
@@ -40,6 +42,87 @@ Page({
   },
 
   upload: function(e) {
+    console.log('eeeee', e)
+    var me = this;
+    var bgmId = e.detail.value.bgmId;
+    var desc = e.detail.value.desc;
+    var video = me.data.videoParams;
+    var duration = video.duration;
+    var tmpHeight = video.tmpHeight;
+    var tmpWidth = video.tmpWidth;
+    var tmpVideoUrl = video.tmpVideoUrl;
+    var tmpCoverUrl = video.tmpCoverUrl;
+    //上传短视频
+    wx.showLoading({
+      title: '上传中...',
+    })
+    console.log('descdescdesc*', desc)
+    var serverUrl = app.serverUrl;
+    wx.uploadFile({
+      url: serverUrl + '/video/upload',
+      formData: {
+        userId: app.userInfo.id,
+        bgmId: bgmId,
+        videoDesc: desc,
+        videoSeconds: duration,
+        videoHeight: tmpHeight,
+        videoWidth: tmpWidth
+      },
+      filePath: tmpVideoUrl,
+      name: 'file',
+      header: {
+        'content-type': 'application/json'
+      },
+      success: function(res) {
+        console.log(res);
+        wx.hideLoading();
+        var data = JSON.parse(res.data)
+        if (data.status == 200) {
+          wx.navigateBack({
+            delta: 1,
+          }), wx.showToast({
+            title: '上传成功',
+            icon: 'success'
+          })
+        } else {
+          wx.showToast({
+            title: '上传失败',
+            icon: 'error'
+          })
+          // var videoId = data.data
+          // wx.uploadFile({
+          //   url: serverUrl + '/video/uploadCover',
+          //   formData: {
+          //     userId: app.userInfo.id,
+          //     videoId: videoId
+          //   },
+          //   filePath: tmpCoverUrl,
+          //   name: 'file',
+          //   header: {
+          //     'content-type': 'application/json'
+          //   },
+          //   success: function(res) {
+          //     console.log(res);
+          //     wx.hideLoading();
+          //     var data = JSON.parse(res.data)
+          //     if (data.status == 200) {
 
-  }
+          //       wx.navigateBack({
+          //         delta: 1,
+          //       }), wx.showToast({
+          //         title: '上传成功',
+          //         icon: 'success'
+          //       })
+          //     } else {
+          //       wx.showToast({
+          //         title: '上传失败',
+          //         icon: 'error'
+          //       })
+          //     }
+          //   }
+          // })
+        }
+      }
+    })
+  },
 })

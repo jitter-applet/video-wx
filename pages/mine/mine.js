@@ -9,8 +9,8 @@ Page({
   onLoad: function(params) {
     var me = this;
     var user = app.userInfo;
-    var serverUrl = app.serverUrl
-
+    var serverUrl = app.serverUrl;
+    var sourceUrl = app.sourceUrl
     wx.showLoading({
       title: '请等待...',
     })
@@ -29,7 +29,7 @@ Page({
             nickname: userinfo.nickname,
             followCounts: userinfo.followCounts,
             receiveLikeCounts: userinfo.receiveLikeCounts,
-            faceUrl: serverUrl + userinfo.faceImage
+            faceUrl: sourceUrl + userinfo.faceImage
             /**
              * 
              * e'>{{nickname}}</label>
@@ -91,6 +91,7 @@ Page({
           title: '上传中...',
         })
         var serverUrl = app.serverUrl;
+        var sourceUrl = app.sourceUrl;
         wx.uploadFile({
           url: serverUrl + '/user/uploadFace?userId=' + app.userInfo.id,
           filePath: tempFilePaths[0],
@@ -112,7 +113,7 @@ Page({
               var imageUrl = data.data;
               //作用域联调
               me.setData({
-                faceUrl: serverUrl + imageUrl
+                faceUrl: sourceUrl + imageUrl
               })
             } else if (res.data.status == 500) {
               wx.showToast({
@@ -123,29 +124,33 @@ Page({
           }
         })
       },
-     
+
 
 
     })
-  }, uploadVideo: function () {
+  },
+  uploadVideo: function() {
     var me = this;
     wx.chooseVideo({
       sourceType: ['album'],
-      success: function (res) {
-        console.log(res);
+      success: function(res) {
+        console.log("res==>", res);
         var duration = res.duration;
         var tmpHeight = res.height;
         var tmpWidth = res.width;
         var tmpVideoUrl = res.tempFilePath;
         var tmpCoverUrl = res.thumbTempFilePath;
-        if(duration>10){
+        if (duration > 10) {
           wx.showToast({
-            title:'视频长度不能超过10秒...',
-            icon:'none',
-            duration:2500
-          } )
-        }else{
+            title: '视频长度不能超过10秒...',
+            icon: 'none',
+            duration: 2500
+          })
+        } else {
           //TODO 打开选择bgm页面
+          wx.navigateTo({
+            url: `../chooseBgm/chooseBgm?duration=${duration}&tmpHeight=${tmpHeight}&tmpWidth=${tmpWidth}&tmpVideoUrl=${tmpVideoUrl}&tmpCoverUrl=${tmpCoverUrl}`
+          })
         }
       }
     })

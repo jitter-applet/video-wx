@@ -1,9 +1,9 @@
 {
   "pages": [
-    "pages/chooseBgm/chooseBgm",
-    "pages/userLogin/login",
-    "pages/mine/mine",
     "pages/index/index",
+    "pages/userLogin/login",
+    "pages/chooseBgm/chooseBgm",
+    "pages/mine/mine",
     "pages/userRegist/regist"
   ],
   "window": {

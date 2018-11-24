@@ -5,7 +5,7 @@ Page({
 
   },
 
-  doRegist: function (e) {
+  doRegist: function(e) {
     var formObject = e.detail.value;
     var username = formObject.username;
     var password = formObject.password;
@@ -32,17 +32,17 @@ Page({
         header: {
           'content-type': 'application/json'
         },
-        success: function (res) {
+        success: function(res) {
           wx.hideLoading();
           var status = res.data.status
           console.log(res.data);
           if (status == 200) {
 
             wx.showToast({
-              title: '用户注册成功~',
-              icon: 'none',
-              duration: 3000,
-            }),
+                title: '用户注册成功~',
+                icon: 'none',
+                duration: 3000,
+              }),
               app.userInfo = res.data.data;
 
           } else if (status == 500) {
@@ -58,7 +58,7 @@ Page({
 
     }
   },
-  goLoginPage: function () {
+  goLoginPage: function() {
     wx.redirectTo({
       url: '../userLogin/login',
     })
