@@ -1,0 +1,17 @@
+<video 
+src='{{serverUrl}}/1811190HP52SC9D4/video/ne.mp4'
+controls='{{true}}'
+danmu-list='{{danmuList}}'
+enable-danmu='true'
+danmu-btn='true'
+loop='true'
+page-gesture='true'
+direction='90'
+show-progress='{{true}}'
+show-fullscreen-btn='{{true}}'
+show-play-btn='{{true}}'
+show-center-play-btn='{{true}}'
+enable-progress-gesture='{{ture}}'
+bindplay='bindplay'
+bindpause='bindpause'
+></video>

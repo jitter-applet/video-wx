@@ -1,3 +1,4 @@
+var videoUtil = require('../../utils/videoUtil.js')
 const app = getApp()
 
 Page({
@@ -8,9 +9,12 @@ Page({
 
   onLoad: function(params) {
     var me = this;
-    var user = app.userInfo;
+
+    //var user = app.userInfo;
+    //fixme 修改原有的全局对象为本地缓存
+    var user = app.getGlobalUserInfo();
     var serverUrl = app.serverUrl;
-    var sourceUrl = app.sourceUrl
+
     wx.showLoading({
       title: '请等待...',
     })
@@ -18,10 +22,13 @@ Page({
       url: serverUrl + '/user/query?userId=' + user.id,
       method: "POST",
       header: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'userId': user.id,
+        'userToken': user.userToken,
       },
       success: function(res) {
         wx.hideLoading();
+
         if (res.data.status == 200) {
           var userinfo = res.data.data;
           me.setData({
@@ -29,26 +36,28 @@ Page({
             nickname: userinfo.nickname,
             followCounts: userinfo.followCounts,
             receiveLikeCounts: userinfo.receiveLikeCounts,
-            faceUrl: sourceUrl + userinfo.faceImage
-            /**
-             * 
-             * e'>{{nickname}}</label>
+            faceUrl: serverUrl + userinfo.faceImage
 
-    <button size='mini' class='primary' bindtap='uploadVideo'> 上传作品</button>
-    <button size='mini' type='' class='logout' bindtap='logout'>注销</button>
-    <view class='container-row'>
-      <label class='info-items'>{{fansCounts}} 粉丝</label>
-      <label class='info-items'>{{followCounts}} 关注</label>
-      <label class='info-items'>{{receiveLikeCounts}} 获赞</label>
-    </view>
-             */
+          });
+        
+        } else if (res.data.status == 502) {
+          wx.showToast({
+            title: res.data.msg,
+            duration:3000,
+            icon:'none',
+            success:function(){
+              wx.redirectTo({
+                url: '../userLogin/login',
+              })
+            }
           })
         }
       }
     })
   },
   logout: function() {
-    var user = app.userInfo;
+    // var user = app.userInfo;
+    var user = app.getGlobalUserInfo();
     var serverUrl = app.serverUrl;
     wx.showLoading({
       title: '请等待...',
@@ -58,20 +67,25 @@ Page({
       url: serverUrl + '/logout?userId=' + user.id,
       method: "POST",
       header: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+    
       },
       success: function(res) {
         console.log(res.data)
         wx.hideLoading();
         if (res.data.status == 200) {
 
+          //app.userInfo = null;
+          //注销以后，清空缓存
+          wx.removeStorageSync('userInfo')
           wx.navigateTo({
-            url: '../userLogin/login',
-          }), wx.showToast({
-            title: '注销成功',
-            icon: 'sucess',
-            duration: 1200
-          })
+              url: '../userLogin/login',
+            }),
+            wx.showToast({
+              title: '注销成功',
+              icon: 'sucess',
+              duration: 1200
+            });
         }
       }
     })
@@ -91,9 +105,9 @@ Page({
           title: '上传中...',
         })
         var serverUrl = app.serverUrl;
-        var sourceUrl = app.sourceUrl;
+        var userInfo = app.getGlobalUserInfo();
         wx.uploadFile({
-          url: serverUrl + '/user/uploadFace?userId=' + app.userInfo.id,
+          url: serverUrl + '/user/uploadFace?userId=' + userInfo.id, // app.userInfo.id
           filePath: tempFilePaths[0],
           name: 'file',
           header: {
@@ -113,14 +127,13 @@ Page({
               var imageUrl = data.data;
               //作用域联调
               me.setData({
-                faceUrl: sourceUrl + imageUrl
+                faceUrl: serverUrl + imageUrl
               })
             } else if (res.data.status == 500) {
               wx.showToast({
                 title: res.data.msg,
               })
             }
-
           }
         })
       },
@@ -130,6 +143,7 @@ Page({
     })
   },
   uploadVideo: function() {
+    // videoUtil.uploadVideo();
     var me = this;
     wx.chooseVideo({
       sourceType: ['album'],

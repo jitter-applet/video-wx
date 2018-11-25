@@ -1,12 +1,21 @@
 const app = getApp()
 
 Page({
-  data: {
+  data: {},
+
+  onLoad: function(params) {
+    params != undefined ? () => {
+        var me = this;
+        var redirectUrl = params.redirectUrl
+        redirectUrl = redirectUrl.replace(/#/g, "?");
+        redirectUrl = redirectUrl.replace(/@/g, "=");
+        me.redirectUrl = redirectUrl;
+      }
+      :
+      ''
   },
-
-
   // 登录  
-  doLogin: function (e) {
+  doLogin: function(e) {
     var me = this;
     var formObject = e.detail.value;
     var username = formObject.username;
@@ -34,25 +43,34 @@ Page({
         header: {
           'content-type': 'application/json' // 默认值
         },
-        success: function (res) {
+        success: function(res) {
           console.log(res.data);
           wx.hideLoading();
           if (res.data.status == 200) {
             // 登录成功跳转 
 
-            app.userInfo = res.data.data;
-            console.log("hhhehe",app.userInfo)
+            // app.userInfo = res.data.data;
+            //fixme 修改原有的全局对象为本地缓存
+            app.setGlobalUserInfo(res.data.data);
+            console.log("hhhehe", app.userInfo)
             // fixme 修改原有的全局对象为本地缓存
             //app.setGlobalUserInfo(res.data.data);
             // 页面跳转
-            wx.navigateTo({
-              url: '../mine/mine',
-            }),
-              wx.showToast({
-                title: '登录成功',
-                icon: 'success',
-                duration: 2000
-              });
+            var redirectUrl = me.redirectUrl;
+            if (redirectUrl != null && redirectUrl != '' && redirectUrl != undefined) {
+              wx.redirectTo({
+                  url: redirectUrl,
+                }),
+                wx.showToast({
+                  title: '登录成功',
+                  icon: 'success',
+                  duration: 2000
+                });
+            } else {
+              wx.navigateTo({
+                url: '../mine/mine',
+              })
+            }
           } else if (res.data.status == 500) {
             // 失败弹出框
             wx.showToast({
@@ -66,7 +84,7 @@ Page({
     }
   },
 
-  goRegistPage: function () {
+  goRegistPage: function() {
     wx.redirectTo({
       url: '../userRegist/regist',
     })

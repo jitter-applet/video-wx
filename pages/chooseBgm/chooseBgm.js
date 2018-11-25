@@ -58,10 +58,11 @@ Page({
     })
     console.log('descdescdesc*', desc)
     var serverUrl = app.serverUrl;
+    var userInfo = app.getGlobalUserInfo();
     wx.uploadFile({
       url: serverUrl + '/video/upload',
       formData: {
-        userId: app.userInfo.id,
+        userId: userInfo.id,// fixme 原来的 app.userInfo.id
         bgmId: bgmId,
         videoDesc: desc,
         videoSeconds: duration,
@@ -74,7 +75,7 @@ Page({
         'content-type': 'application/json'
       },
       success: function(res) {
-        console.log(res);
+        console.log("this is the res-->",res);
         wx.hideLoading();
         var data = JSON.parse(res.data)
         if (data.status == 200) {
