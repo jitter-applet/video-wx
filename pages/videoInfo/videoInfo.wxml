@@ -5,7 +5,7 @@
     src='{{src}}'
     controls='{{true}}'
     autoplay='{{true}}'
-    muted='{{true}}' 
+    muted='{{false}}' 
     loop='true' 
     enable-progress-gesture='{{ture}}' 
     danmu-list='{{danmuList}}' 

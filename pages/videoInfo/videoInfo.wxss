@@ -34,17 +34,14 @@ page {
 
 .video-desc {
     width: 600rpx;
-    height: 100rpx;
+    height: 80rpx;
     white-space: pre-wrap;
 }
 
 .container-bottom {
-    /* bottom: 10px;  */
     display: flex;
-    margin-top: 60rpx;
     margin-left: 50rpx;
     margin-right: 50rpx;
-    /* margin-bottom: 10rpx; */
     justify-content: space-between;
     /* position: fixed;  */
 }

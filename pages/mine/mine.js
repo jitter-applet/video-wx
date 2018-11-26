@@ -168,6 +168,11 @@ Page({
         }
       }
     })
+  },
+  videoList:function(){
+    wx.navigateTo({
+      url: '../index/index',
+    })
   }
 
 })
